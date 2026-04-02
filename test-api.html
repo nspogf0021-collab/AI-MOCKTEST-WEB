@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Gemini API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        input { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; background: blue; color: white; border: none; cursor: pointer; }
+        .result { margin-top: 20px; padding: 15px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Test Gemini API Key</h2>
+        <input type="text" id="apiKey" placeholder="Enter your Gemini API key">
+        <button onclick="testAPI()">Test API</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const result = document.getElementById('result');
+            
+            if (!apiKey) {
+                result.innerHTML = 'Please enter an API key';
+                return;
+            }
+
+            try {
+                // Test 1: Check if models endpoint works
+                const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {
+                    method: 'GET'
+                });
+                
+                if (modelsResponse.ok) {
+                    const modelsData = await modelsResponse.json();
+                    result.innerHTML = '✅ API Key is working! Available models:<br>';
+                    modelsData.models.forEach(model => {
+                        result.innerHTML += `- ${model.name}<br>`;
+                    });
+                } else {
+                    result.innerHTML = '❌ API Error: ' + modelsResponse.status + ' - ' + modelsResponse.statusText;
+                }
+            } catch (error) {
+                result.innerHTML = '❌ Network Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

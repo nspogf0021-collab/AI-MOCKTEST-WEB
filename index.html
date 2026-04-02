@@ -497,17 +497,15 @@
                             <option value="mixed">Mixed</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="aiMode"><i class="fas fa-microchip"></i> AI Mode</label>
-                        <select id="aiMode">
-                            <option value="adaptive">Adaptive</option>
-                            <option value="fixed">Fixed Difficulty</option>
-                            <option value="learning">Learning Mode</option>
-                        </select>
-                    </div>
                 </div>
                 
-                <button class="btn btn-primary btn-block" id="startTestBtn">
+                <div class="form-group" style="margin-top: 20px;">
+                    <label for="apiKeyInput"><i class="fas fa-key"></i> Google Gemini API Key</label>
+                    <input type="password" id="apiKeyInput" placeholder="Enter your API key (get free at aistudio.google.com/apikey)" style="padding: 12px; border: 2px solid var(--light); border-radius: 8px; font-size: 14px;">
+                    <small style="color: var(--gray); margin-top: 5px;">Get a free API key from <a href="https://aistudio.google.com/apikey" target="_blank" style="color: var(--primary);">Google AI Studio</a></small>
+                </div>
+                
+                <button class="btn btn-primary btn-block" id="startTestBtn" style="margin-top: 20px;">
                     <i class="fas fa-rocket"></i> Generate AI Test & Start
                 </button>
             </div>
@@ -549,8 +547,140 @@
             { id: 'mcat', name: 'MCAT', category: 'medical', subcategory: 'neet', difficulty: 'hard', subjects: ['science', 'math', 'reading'], description: 'Medical College Admission Test' },
         ];
 
-        // ==================== QUESTION BANK ====================
-        const questionBank = {
+        // ==================== GEMINI API CONFIGURATION ====================
+        // Replace with your actual Gemini API key
+        const GEMINI_API_KEY = 'AIzaSyAtyw0TzSzlhuveS4ABTWiUpDmATQdFHSw';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
+        
+        // ==================== AI QUESTION GENERATION ====================
+        async function generateAIQuestions(exam, subjects, difficulty, totalQuestions) {
+            // Generate ALL questions via AI (no local fallback)
+            const prompt = `Generate ${totalQuestions} multiple-choice questions for ${exam.name} exam.
+            
+Exam Description: ${exam.description}
+Difficulty: ${difficulty}
+Subjects to cover: ${subjects.join(', ')}
+
+For each question, provide:
+1. The question text
+2. Exactly 4 options (A, B, C, D)
+3. The correct answer (0 for A, 1 for B, 2 for C, 3 for D)
+4. A detailed explanation (3-5 sentences)
+5. The subject area (from: ${subjects.join(', ')})
+6. The topic name
+
+Format the response as a JSON array with this exact structure:
+[
+  {
+    "question": "Question text here",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correct": 0,
+    "explanation": "Detailed explanation here",
+    "subject": "subject_name",
+    "topic": "Topic Name"
+  }
+]
+
+Make the questions appropriate for ${difficulty} difficulty level.
+Include a mix of conceptual and application-based questions.
+Some questions can include a passage for reading comprehension.
+IMPORTANT: Generate ALL ${totalQuestions} questions. Do not generate fewer questions.`;
+
+            try {
+                // Use the API key from window (set by startTest) or fallback to constant
+                const apiKeyToUse = window.GEMINI_API_KEY || GEMINI_API_KEY;
+                const response = await fetch(`${GEMINI_API_URL}?key=${apiKeyToUse}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 8192, // Full tokens for complete generation
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const aiResponse = data.candidates[0].content.parts[0].text;
+                
+                // Extract JSON from the response (remove markdown code blocks if present)
+                let jsonStr = aiResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+                
+                // Parse the JSON
+                const questions = JSON.parse(jsonStr);
+                
+                // Validate and add IDs
+                return questions.map((q, index) => ({
+                    ...q,
+                    id: index,
+                    subject: q.subject || subjects[Math.floor(Math.random() * subjects.length)],
+                    topic: q.topic || 'General'
+                }));
+                
+            } catch (error) {
+                console.error('Error generating questions:', error);
+                throw new Error('Failed to generate AI questions. Please check your API key and try again.');
+            }
+        }
+
+        function generateFallbackQuestions(exam, subjects, difficulty, totalQuestions) {
+            // Get questions from the fallback bank
+            let allQuestions = [];
+            
+            subjects.forEach(subject => {
+                if (fallbackQuestionBank[subject]) {
+                    allQuestions = allQuestions.concat(fallbackQuestionBank[subject]);
+                }
+            });
+
+            // If no questions found for subjects, use all available questions
+            if (allQuestions.length === 0) {
+                Object.values(fallbackQuestionBank).forEach(bank => {
+                    allQuestions = allQuestions.concat(bank);
+                });
+            }
+
+            // Shuffle and select required number
+            const shuffled = shuffleArray(allQuestions);
+            const selected = shuffled.slice(0, totalQuestions);
+            
+            // Add IDs and ensure we have enough questions
+            let finalQuestions = selected.map((q, index) => ({
+                ...q,
+                id: index,
+                subject: q.subject || subjects[Math.floor(Math.random() * subjects.length)],
+                topic: q.topic || 'General'
+            }));
+
+            // If we don't have enough, pad with random questions
+            while (finalQuestions.length < totalQuestions) {
+                const randomQuestion = allQuestions[Math.floor(Math.random() * allQuestions.length)];
+                if (randomQuestion) {
+                    finalQuestions.push({
+                        ...randomQuestion,
+                        id: finalQuestions.length,
+                        subject: randomQuestion.subject || subjects[Math.floor(Math.random() * subjects.length)],
+                        topic: randomQuestion.topic || 'General'
+                    });
+                }
+            }
+
+            return finalQuestions;
+        }
+        
+        // Fallback question bank (used if API fails or for demo)
+        const fallbackQuestionBank = {
             math: [
                 { question: "If 3x + 7 = 22, what is the value of x?", options: ["3", "5", "7", "9"], correct: 1, explanation: "3x + 7 = 22 → 3x = 15 → x = 5", subject: "math", topic: "Algebra" },
                 { question: "What is 15% of 200?", options: ["20", "25", "30", "35"], correct: 2, explanation: "15% of 200 = 0.15 × 200 = 30", subject: "math", topic: "Percentages" },
@@ -732,40 +862,56 @@
         }
 
         // ==================== TEST GENERATION ====================
-        function startTest() {
+        async function startTest() {
             const exam = state.selectedExam;
             if (!exam) return;
             
-            closeModal();
-            showPage('testPage');
+            // Use the embedded API key or the one from input field
+            const inputKey = document.getElementById('apiKeyInput').value.trim();
+            const apiKey = inputKey || GEMINI_API_KEY;
             
-            // Generate questions
-            let allQuestions = [];
-            exam.subjects.forEach(subject => {
-                const input = document.getElementById(`q_${subject}`);
-                const count = input ? parseInt(input.value) || 0 : 0;
-                const subjectQuestions = questionBank[subject] || [];
+            if (!apiKey) {
+                alert('Please enter a valid Google Gemini API key to generate AI questions. Get one free at: https://aistudio.google.com/apikey');
+                return;
+            }
+            
+            // Update the global API key for the generateAIQuestions function
+            window.GEMINI_API_KEY = apiKey;
+            
+            // Show loading state
+            const startBtn = document.getElementById('startTestBtn');
+            const originalText = startBtn.innerHTML;
+            startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating AI Questions...';
+            startBtn.disabled = true;
+            
+            try {
+                const totalQ = parseInt(document.getElementById('totalQDisplay').textContent);
+                const difficulty = document.getElementById('difficulty').value;
                 
-                for (let i = 0; i < count; i++) {
-                    const q = subjectQuestions[i % subjectQuestions.length];
-                    allQuestions.push({ ...q, id: allQuestions.length });
-                }
-            });
-            
-            // Shuffle
-            allQuestions = shuffleArray(allQuestions);
-            
-            state.questions = allQuestions;
-            state.currentQuestion = 0;
-            state.answers = new Array(allQuestions.length).fill(null);
-            state.flags = new Array(allQuestions.length).fill(false);
-            state.timeRemaining = parseInt(document.getElementById('timeLimit').value) * 60;
-            state.timeElapsed = 0;
-            
-            renderQuestion();
-            renderNavigator();
-            startTimer();
-            updateProgress();
+                // Generate questions using AI
+                const aiQuestions = await generateAIQuestions(exam, exam.subjects, difficulty, totalQ);
+                
+                closeModal();
+                showPage('testPage');
+                
+                state.questions = aiQuestions;
+                state.currentQuestion = 0;
+                state.answers = new Array(aiQuestions.length).fill(null);
+                state.flags = new Array(aiQuestions.length).fill(false);
+                state.timeRemaining = parseInt(document.getElementById('timeLimit').value) * 60;
+                state.timeElapsed = 0;
+                
+                renderQuestion();
+                renderNavigator();
+                startTimer();
+                updateProgress();
+                
+            } catch (error) {
+                console.error('Failed to generate questions:', error);
+                alert('Failed to generate AI questions. Please check your API key and try again. Error: ' + error.message);
+                startBtn.innerHTML = originalText;
+                startBtn.disabled = false;
+            }
         }
 
         function shuffleArray(arr) {
