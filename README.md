@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AI MockTest Pro
 
 Experience the future of test preparation with AI-powered mock tests. Generate personalized exams for SAT, GRE, JEE, NEET, UPSC, and 30+ more exams.
@@ -171,3 +172,6 @@ For issues and questions:
 2. Verify your API key is working
 3. Ensure you have internet connection
 4. Contact support if issues persist
+=======
+# AI-MOCKTEST-WEB
+>>>>>>> 58486c1fe9a27ee195ec0fe20b9de86093e885ab
