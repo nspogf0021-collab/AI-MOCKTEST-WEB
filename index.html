@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI MockTest Pro - Intelligent Test Preparation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366f1; --primary-dark: #4f46e5; --primary-light: #818cf8;
+            --secondary: #06b6d4; --success: #10b981; --warning: #f59e0b;
+            --danger: #ef4444; --dark: #1e293b; --gray: #64748b; --gray-light: #94a3b8;
+            --light: #f1f5f9; --white: #ffffff; --radius: 12px;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; color: var(--dark); line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .card {
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            border-radius: var(--radius); padding: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Welcome Page */
+        .welcome-hero { text-align: center; padding: 60px 20px; }
+        .welcome-hero h1 {
+            font-size: 48px; font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .welcome-hero p { font-size: 18px; color: var(--gray); max-width: 600px; margin: 0 auto 40px; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin: 40px 0; }
+        .feature-card {
+            background: var(--light); border-radius: var(--radius); padding: 30px;
+            text-align: center; transition: transform 0.3s ease;
+        }
+        .feature-card:hover { transform: translateY(-5px); }
+        .feature-card i { font-size: 48px; color: var(--primary); margin-bottom: 20px; }
+        .feature-card h3 { font-size: 18px; margin-bottom: 10px; }
+        .feature-card p { font-size: 14px; color: var(--gray); }
+        .btn {
+            padding: 16px 40px; border: none; border-radius: var(--radius);
+            font-size: 18px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 10px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px var(--primary); }
+        
+        /* T&C Page */
+        .tc-content { max-height: 400px; overflow-y: auto; padding: 20px; background: var(--light); border-radius: var(--radius); margin: 20px 0; }
+        .tc-content h3 { color: var(--primary); margin: 20px 0 10px; }
+        .tc-content p { margin-bottom: 15px; font-size: 14px; }
+        .tc-checkbox { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
+        .tc-checkbox input { width: 20px; height: 20px; }
+        .tc-checkbox label { font-size: 16px; font-weight: 500; }
+        
+        /* Exam Selection Page */
+        .search-container { position: relative; margin-bottom: 30px; }
+        .search-container input {
+            width: 100%; padding: 16px 20px 16px 50px;
+            border: 2px solid var(--light); border-radius: var(--radius);
+            font-size: 16px; transition: border-color 0.3s;
+        }
+        .search-container input:focus { outline: none; border-color: var(--primary); }
+        .search-container i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--gray); }
+        .search-results {
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: var(--white); border-radius: var(--radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 400px;
+            overflow-y: auto; z-index: 1000; display: none;
+        }
+        .exam-item {
+            padding: 15px 20px; cursor: pointer; border-bottom: 1px solid var(--light);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background 0.2s;
+        }
+        .exam-item:hover { background: var(--light); }
+        .exam-item:last-child { border-bottom: none; }
+        .exam-item-info h4 { color: var(--primary); margin-bottom: 4px; }
+        .exam-item-info p { font-size: 12px; color: var(--gray); }
+        .exam-item-badges span {
+            font-size: 11px; padding: 3px 10px; border-radius: 12px;
+            margin-left: 5px; background: var(--light); color: var(--gray);
+        }
+        .exam-item-badges span.easy { background: var(--success); color: white; }
+        .exam-item-badges span.medium { background: var(--warning); color: white; }
+        .exam-item-badges span.hard { background: var(--danger); color: white; }
+        
+        /* Exam Item Styles */
+        .exam-item-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
+        .exam-item-info p { font-size: 14px; color: var(--gray); }
+        .exam-item-badges { display: flex; justify-content: flex-end; margin-top: 10px; }
+        
+        /* Category Tabs */
+        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .category-tab {
+            padding: 10px 20px; border: 2px solid var(--light); border-radius: var(--radius);
+            cursor: pointer; font-weight: 500; transition: all 0.3s; background: var(--white);
+        }
+        .category-tab:hover, .category-tab.active { border-color: var(--primary); color: var(--primary); background: rgba(99,102,241,0.1); }
+        
+        /* Config Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); display: flex; align-items: center;
+            justify-content: center; z-index: 2000; opacity: 0;
+            visibility: hidden; transition: all 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal {
+            background: var(--white); border-radius: var(--radius);
+            padding: 30px; width: 90%; max-width: 600px; max-height: 90vh;
+            overflow-y: auto; transform: scale(0.9); transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h2 { font-size: 24px; color: var(--primary); }
+        .modal-close {
+            width: 40px; height: 40px; border: none; background: var(--light);
+            border-radius: 50%; cursor: pointer; font-size: 18px; color: var(--gray);
+            transition: all 0.3s;
+        }
+        .modal-close:hover { background: var(--danger); color: var(--white); }
+        .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 14px; font-weight: 600; color: var(--dark); }
+        .form-group select, .form-group input {
+            padding: 12px; border: 2px solid var(--light); border-radius: 8px;
+            font-size: 14px; transition: border-color 0.3s;
+        }
+        .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--primary); }
+        .subject-dist { margin: 20px 0; }
+        .subject-dist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .total-display {
+            padding: 15px; background: var(--primary); color: var(--white);
+            border-radius: 8px; text-align: center; font-weight: 600; font-size: 18px;
+            margin: 15px 0;
+        }
+        
+        /* Test Interface */
+        .test-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; background: var(--dark); border-radius: 8px;
+            margin-bottom: 20px; color: var(--white);
+        }
+        .timer { font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .timer.warning { color: var(--warning); }
+        .timer.danger { color: var(--danger); animation: pulse 0.5s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .progress-info { text-align: center; }
+        .progress-bar-container { width: 200px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); transition: width 0.3s; }
+        .quit-btn {
+            background: var(--danger); color: var(--white); border: none;
+            padding: 8px 16px; border-radius: 8px; cursor: pointer;
+            font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;
+        }
+        .question-card { background: var(--white); border-radius: var(--radius); padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question-header { display: flex; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--light); }
+        .question-number { font-size: 14px; font-weight: 600; color: var(--primary); background: rgba(99,102,241,0.1); padding: 6px 16px; border-radius: 20px; }
+        .question-text { font-size: 18px; font-weight: 500; line-height: 1.8; margin-bottom: 25px; }
+        .passage { background: var(--light); padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary); }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option {
+            display: flex; align-items: center; gap: 15px; padding: 15px 20px;
+            border: 2px solid var(--light); border-radius: 8px; cursor: pointer; transition: all 0.3s;
+        }
+        .option:hover { border-color: var(--primary-light); background: rgba(99,102,241,0.05); }
+        .option.selected { border-color: var(--primary); background: rgba(99,102,241,0.1); }
+        .option.correct { border-color: var(--success); background: rgba(16,185,129,0.1); }
+        .option.incorrect { border-color: var(--danger); background: rgba(239,68,68,0.1); }
+        .option-letter {
+            width: 36px; height: 36px; display: flex; align-items: center;
+            justify-content: center; background: var(--light); border-radius: 50%; font-weight: 600; flex-shrink: 0;
+        }
+        .option.selected .option-letter { background: var(--primary); color: var(--white); }
+        .navigator { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--light); }
+        .nav-btn {
+            width: 40px; height: 40px; display: flex; align-items: center;
+            justify-content: center; border: 2px solid var(--light); border-radius: 8px;
+            cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s; background: var(--white);
+        }
+        .nav-btn.current { background: var(--primary); color: var(--white); border-color: var(--primary); }
+        .nav-btn.answered { background: var(--success); color: var(--white); border-color: var(--success); }
+        .nav-btn.flagged { background: var(--warning); color: var(--white); border-color: var(--warning); }
+        .nav-btn.unanswered { background: var(--danger); color: var(--white); border-color: var(--danger); }
+        .action-buttons { display: flex; gap: 15px; margin-top: 25px; justify-content: space-between; }
+        .btn-secondary { background: var(--light); color: var(--dark); }
+        .btn-warning { background: linear-gradient(135deg, var(--warning), #d97706); color: var(--white); }
+        
+        /* Results */
+        .score-circle {
+            width: 200px; height: 200px; margin: 0 auto 30px; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .score-circle svg { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
+        .score-circle circle { fill: none; stroke-width: 10; }
+        .score-circle .bg { stroke: var(--light); }
+        .score-circle .progress { stroke: var(--primary); stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+        .score-value { font-size: 48px; font-weight: 700; color: var(--primary); }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin: 30px 0; }
+        .result-stat { padding: 20px; background: var(--light); border-radius: 8px; }
+        .result-stat .value { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
+        .result-stat .label { font-size: 12px; color: var(--gray); text-transform: uppercase; }
+        .result-stat.correct .value { color: var(--success); }
+        .result-stat.incorrect .value { color: var(--danger); }
+        .explanation { background: var(--light); padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .explanation h4 { color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Dashboard */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .dashboard-card { background: var(--white); border-radius: var(--radius); padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .dashboard-card h3 { font-size: 14px; color: var(--gray); text-transform: uppercase; margin-bottom: 10px; }
+        .dashboard-card .value { font-size: 32px; font-weight: 700; color: var(--primary); }
+        .tabs { display: flex; gap: 5px; margin-bottom: 25px; background: var(--light); border-radius: 8px; padding: 5px; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; border-radius: 8px; font-weight: 500; transition: all 0.3s; }
+        .tab.active { background: var(--white); color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--light); }
+        .history-score.good { color: var(--success); }
+        .history-score.average { color: var(--warning); }
+        .history-score.poor { color: var(--danger); }
+        
+        @media (max-width: 768px) {
+            .welcome-hero h1 { font-size: 32px; }
+            .config-grid { grid-template-columns: 1fr; }
+            .test-header { flex-wrap: wrap; gap: 10px; }
+            .action-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Page 1: Welcome Page -->
+        <div id="welcomePage" class="card fade-in">
+            <div class="welcome-hero">
+                <div style="font-size: 80px; color: var(--primary); margin-bottom: 20px;">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h1>AI MockTest Pro</h1>
+                <p>Experience the future of test preparation with AI-powered mock tests. Generate personalized exams for SAT, GRE, JEE, NEET, UPSC, and 30+ more exams.</p>
+                <button class="btn btn-primary" onclick="showPage('tcPage')">
+                    <i class="fas fa-rocket"></i> Get Started
+                </button>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI-Powered Questions</h3>
+                    <p>Real AI generates unique questions tailored to your needs</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-list"></i>
+                    <h3>50+ Exam Types</h3>
+                    <p>From SAT to UPSC, JEE to NEET - all exams covered</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Smart Analytics</h3>
+                    <p>Detailed performance tracking and weak area identification</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-cog"></i>
+                    <h3>Fully Customizable</h3>
+                    <p>Set exact question counts per subject and difficulty</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Terms & Conditions -->
+        <div id="tcPage" class="card fade-in hidden">
+            <div class="card-title" style="font-size: 24px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-file-contract" style="color: var(--primary);"></i>
+                Terms & Conditions
+            </div>
+            <div class="tc-content">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By using AI MockTest Pro, you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use this service.</p>
+                
+                <h3>2. Service Description</h3>
+                <p>AI MockTest Pro provides AI-generated mock tests for various competitive examinations. The questions are generated using Google Gemini API and are intended for educational and practice purposes only.</p>
+                
+                <h3>3. User Responsibilities</h3>
+                <p>- You are responsible for maintaining the confidentiality of your account<br>
+                - You agree to use the service only for lawful purposes<br>
+                - You will not attempt to gain unauthorized access to the system<br>
+                - You will not use the service to cheat in actual examinations</p>
+                
+                <h3>4. Data Privacy</h3>
+                <p>We respect your privacy. All test data is stored locally in your browser. We do not collect, store, or share your personal information with third parties.</p>
+                
+                <h3>5. AI-Generated Content</h3>
+                <p>The questions generated by our AI system are for practice purposes only. While we strive for accuracy, we cannot guarantee that all questions are error-free. Please verify critical information from official sources.</p>
+                
+                <h3>6. Limitation of Liability</h3>
+                <p>AI MockTest Pro is provided "as is" without warranties of any kind. We are not liable for any damages arising from the use of this service. This platform is for practice only and should not be your sole source of exam preparation.</p>
+                
+                <h3>7. Modifications</h3>
+                <p>We reserve the right to modify these terms at any time. Continued use of the service after any modifications constitutes acceptance of the updated terms.</p>
+                
+                <h3>8. Contact</h3>
+                <p>For any questions regarding these terms, please contact us at support@aimocktestpro.com</p>
+            </div>
+            <div class="tc-checkbox">
+                <input type="checkbox" id="tcAccept">
+                <label for="tcAccept">I have read and agree to the Terms & Conditions</label>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-secondary" onclick="showPage('welcomePage')">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button class="btn btn-primary" onclick="acceptTC()" id="acceptBtn" disabled>
+                    <i class="fas fa-check"></i> Accept & Continue
+                </button>
+            </div>
+        </div>
+
+        <!-- Page 3: Exam Selection -->
+        <div id="examPage" class="card fade-in hidden">
+            <div class="card-title" style="font-size: 24px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-graduation-cap" style="color: var(--primary);"></i>
+                Select Your Exam
+            </div>
+            
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="examSearch" placeholder="Search exams... (e.g., JEE Main, UPSC, SBI PO, SAT)" oninput="searchExams(this.value)">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            
+            <div class="category-tabs" id="categoryTabs">
+                <div class="category-tab active" onclick="filterExams('all')">All Exams</div>
+                <div class="category-tab" onclick="filterExams('indian')">Indian Exams</div>
+                <div class="category-tab" onclick="filterExams('international')">International</div>
+                <div class="category-tab" onclick="filterExams('engineering')">Engineering</div>
+                <div class="category-tab" onclick="filterExams('medical')">Medical</div>
+                <div class="category-tab" onclick="filterExams('banking')">Banking</div>
+            </div>
+            
+            <div id="examList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+                <!-- Exam cards will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Page 4: Test Interface -->
+        <div id="testPage" class="card fade-in hidden">
+            <div class="test-header">
+                <button class="quit-btn" onclick="quitExam()">
+                    <i class="fas fa-times-circle"></i> Quit
+                </button>
+                <div class="timer" id="timer">
+                    <i class="fas fa-clock"></i>
+                    <span id="timerDisplay">30:00</span>
+                </div>
+                <div class="progress-info">
+                    <div style="font-size: 14px;">Question <span id="currentQ">1</span> of <span id="totalQ">25</span></div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar" style="width: 4%"></div>
+                    </div>
+                </div>
+                <button class="flag-btn" id="flagBtn" onclick="toggleFlag()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--gray-light);">
+                    <i class="far fa-flag"></i>
+                </button>
+            </div>
+            
+            <div id="questionContainer"></div>
+            
+            <div class="action-buttons">
+                <div>
+                    <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="nextQuestion()" id="nextBtn">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="btn btn-warning" onclick="submitTest()" id="submitBtn" style="display:none;">
+                        <i class="fas fa-check"></i> Submit Test
+                    </button>
+                </div>
+            </div>
+            
+            <div class="navigator" id="navigator"></div>
+        </div>
+
+        <!-- Page 5: Results -->
+        <div id="resultsPage" class="card fade-in hidden">
+            <div class="card-title" style="text-align: center;">
+                <i class="fas fa-trophy" style="color: var(--primary); font-size: 48px; margin-bottom: 20px;"></i>
+                Test Results
+            </div>
+            
+            <div class="score-circle">
+                <svg viewBox="0 0 200 200">
+                    <circle class="bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="progress" id="scoreCircle" cx="100" cy="100" r="90" stroke-dasharray="565.48" stroke-dashoffset="565.48"></circle>
+                </svg>
+                <div>
+                    <div class="score-value" id="scoreValue">0</div>
+                    <div style="font-size: 14px; color: var(--gray);">Score</div>
+                </div>
+            </div>
+            
+            <div class="results-grid">
+                <div class="result-stat correct"><div class="value" id="correctCount">0</div><div class="label">Correct</div></div>
+                <div class="result-stat incorrect"><div class="value" id="incorrectCount">0</div><div class="label">Incorrect</div></div>
+                <div class="result-stat"><div class="value" id="timeTaken">0:00</div><div class="label">Time Taken</div></div>
+                <div class="result-stat"><div class="value" id="accuracy">0%</div><div class="label">Accuracy</div></div>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="showReviewTab('summary', event)">Summary</div>
+                <div class="tab" onclick="showReviewTab('review', event)">Review</div>
+                <div class="tab" onclick="showReviewTab('explanations', event)">Explanations</div>
+            </div>
+            <div id="reviewContent"></div>
+            
+            <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="retakeTest()"><i class="fas fa-redo"></i> Retake Test</button>
+                <button class="btn btn-secondary" onclick="showPage('examPage')"><i class="fas fa-home"></i> Choose Another Exam</button>
+                <button class="btn btn-secondary" onclick="goToDashboard()"><i class="fas fa-chart-pie"></i> Dashboard</button>
+            </div>
+        </div>
+
+        <!-- Page 6: Dashboard -->
+        <div id="dashboardPage" class="card fade-in hidden">
+            <div class="card-title">
+                <i class="fas fa-chart-pie" style="color: var(--primary);"></i>
+                Your Learning Dashboard
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card"><h3>Total Tests</h3><div class="value" id="dashTotalTests">0</div></div>
+                <div class="dashboard-card"><h3>Average Score</h3><div class="value" id="dashAvgScore">0%</div></div>
+                <div class="dashboard-card"><h3>Best Score</h3><div class="value" id="dashBestScore">0%</div></div>
+                <div class="dashboard-card"><h3>Study Streak</h3><div class="value" id="dashStreak">0</div></div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div>
+                    <h3 style="margin-bottom: 15px;"><i class="fas fa-history" style="color: var(--primary);"></i> Recent Tests</h3>
+                    <div id="historyList"></div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 15px;"><i class="fas fa-bullseye" style="color: var(--primary);"></i> Weak Areas</h3>
+                    <div id="weakAreas"></div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="btn btn-primary" onclick="showPage('examPage')"><i class="fas fa-plus"></i> Start New Test</button>
+            </div>
+        </div>
+
+        <!-- Config Modal -->
+        <div class="modal-overlay" id="configModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="modalExamName">Configure Test</h2>
+                    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <div id="selectedExamInfo" style="padding: 15px; background: var(--light); border-radius: 8px; margin-bottom: 20px;"></div>
+                
+                <h3 style="margin-bottom: 15px; font-size: 16px;">Question Distribution by Subject</h3>
+                <div class="subject-dist" id="subjectDist"></div>
+                <div class="total-display">Total Questions: <span id="totalQDisplay">0</span></div>
+                
+                <div class="config-grid">
+                    <div class="form-group">
+                        <label for="timeLimit"><i class="fas fa-clock"></i> Time Limit</label>
+                        <select id="timeLimit">
+                            <option value="15">15 Minutes</option>
+                            <option value="30" selected>30 Minutes</option>
+                            <option value="60">60 Minutes</option>
+                            <option value="90">90 Minutes</option>
+                            <option value="0">No Time Limit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="difficulty"><i class="fas fa-chart-line"></i> Difficulty</label>
+                        <select id="difficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="aiMode"><i class="fas fa-microchip"></i> AI Mode</label>
+                        <select id="aiMode">
+                            <option value="adaptive">Adaptive</option>
+                            <option value="fixed">Fixed Difficulty</option>
+                            <option value="learning">Learning Mode</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary btn-block" id="startTestBtn">
+                    <i class="fas fa-rocket"></i> Generate AI Test & Start
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== EXAM DATABASE ====================
+        const examDatabase = [
+            // Indian Exams
+            { id: 'upsc-prelims', name: 'UPSC Prelims', category: 'indian', subcategory: 'upsc', difficulty: 'hard', subjects: ['logic', 'reading', 'data'], description: 'Union Public Service Commission Preliminary Exam' },
+            { id: 'upsc-mains', name: 'UPSC Mains', category: 'indian', subcategory: 'upsc', difficulty: 'hard', subjects: ['logic', 'reading', 'data'], description: 'UPSC Civil Services Mains Exam' },
+            { id: 'ssc-cgl', name: 'SSC CGL', category: 'indian', subcategory: 'upsc', difficulty: 'medium', subjects: ['math', 'logic', 'reading'], description: 'Staff Selection Commission CGL' },
+            { id: 'ssc-chsl', name: 'SSC CHSL', category: 'indian', subcategory: 'upsc', difficulty: 'easy', subjects: ['math', 'logic', 'reading'], description: 'SSC CHSL Exam' },
+            { id: 'jee-main', name: 'JEE Main', category: 'engineering', subcategory: 'jee', difficulty: 'hard', subjects: ['math', 'science'], description: 'Joint Entrance Examination Main' },
+            { id: 'jee-advanced', name: 'JEE Advanced', category: 'engineering', subcategory: 'jee', difficulty: 'hard', subjects: ['math', 'science'], description: 'JEE Advanced for IITs' },
+            { id: 'neet-ug', name: 'NEET UG', category: 'medical', subcategory: 'neet', difficulty: 'hard', subjects: ['science'], description: 'National Eligibility cum Entrance Test' },
+            { id: 'neet-pg', name: 'NEET PG', category: 'medical', subcategory: 'neet', difficulty: 'hard', subjects: ['science'], description: 'NEET Post Graduate' },
+            { id: 'sbi-po', name: 'SBI PO', category: 'banking', subcategory: 'bank', difficulty: 'medium', subjects: ['math', 'data', 'logic'], description: 'State Bank of India Probationary Officer' },
+            { id: 'sbi-clerk', name: 'SBI Clerk', category: 'banking', subcategory: 'bank', difficulty: 'medium', subjects: ['math', 'data', 'logic'], description: 'SBI Clerk Exam' },
+            { id: 'ibps-po', name: 'IBPS PO', category: 'banking', subcategory: 'bank', difficulty: 'medium', subjects: ['math', 'data', 'logic'], description: 'Institute of Banking Personnel Selection PO' },
+            { id: 'ibps-clerk', name: 'IBPS Clerk', category: 'banking', subcategory: 'bank', difficulty: 'easy', subjects: ['math', 'data', 'logic'], description: 'IBPS Clerk Exam' },
+            { id: 'rbi-grade-b', name: 'RBI Grade B', category: 'banking', subcategory: 'bank', difficulty: 'hard', subjects: ['math', 'data', 'logic'], description: 'Reserve Bank of India Grade B' },
+            { id: 'rrb-ntpc', name: 'RRB NTPC', category: 'indian', subcategory: 'railways', difficulty: 'medium', subjects: ['math', 'logic', 'science'], description: 'Railway Recruitment Board NTPC' },
+            { id: 'rrb-group-d', name: 'RRB Group D', category: 'indian', subcategory: 'railways', difficulty: 'easy', subjects: ['math', 'logic', 'science'], description: 'RRB Group D Exam' },
+            { id: 'cat', name: 'CAT', category: 'indian', subcategory: 'gmat', difficulty: 'hard', subjects: ['math', 'data', 'logic', 'verbal'], description: 'Common Admission Test for IIMs' },
+            { id: 'xat', name: 'XAT', category: 'indian', subcategory: 'gmat', difficulty: 'hard', subjects: ['math', 'data', 'logic', 'verbal'], description: 'Xavier Aptitude Test' },
+            { id: 'snap', name: 'SNAP', category: 'indian', subcategory: 'gmat', difficulty: 'medium', subjects: ['math', 'data', 'logic', 'verbal'], description: 'Symbiosis National Aptitude Test' },
+            
+            // International Exams
+            { id: 'sat', name: 'SAT', category: 'international', subcategory: 'sat', difficulty: 'medium', subjects: ['math', 'verbal', 'reading', 'writing'], description: 'SAT Reasoning Test' },
+            { id: 'act', name: 'ACT', category: 'international', subcategory: 'act', difficulty: 'medium', subjects: ['math', 'science', 'reading', 'grammar'], description: 'American College Testing' },
+            { id: 'gre', name: 'GRE General', category: 'international', subcategory: 'gre', difficulty: 'medium', subjects: ['verbal', 'math', 'reading', 'logic'], description: 'Graduate Record Examination' },
+            { id: 'gmat', name: 'GMAT Focus', category: 'international', subcategory: 'gmat', difficulty: 'hard', subjects: ['math', 'data', 'logic', 'verbal'], description: 'Graduate Management Admission Test' },
+            { id: 'ielts', name: 'IELTS Academic', category: 'international', subcategory: 'ielts', difficulty: 'medium', subjects: ['reading', 'grammar', 'verbal'], description: 'IELTS Academic Module' },
+            { id: 'toefl', name: 'TOEFL iBT', category: 'international', subcategory: 'ielts', difficulty: 'medium', subjects: ['reading', 'grammar', 'verbal'], description: 'Test of English as a Foreign Language' },
+            { id: 'psat', name: 'PSAT/NMSQT', category: 'international', subcategory: 'sat', difficulty: 'easy', subjects: ['math', 'verbal', 'reading', 'writing'], description: 'Preliminary SAT' },
+            { id: 'lsat', name: 'LSAT', category: 'international', subcategory: 'gre', difficulty: 'hard', subjects: ['logic', 'reading', 'verbal'], description: 'Law School Admission Test' },
+            { id: 'mcat', name: 'MCAT', category: 'medical', subcategory: 'neet', difficulty: 'hard', subjects: ['science', 'math', 'reading'], description: 'Medical College Admission Test' },
+        ];
+
+        // ==================== QUESTION BANK ====================
+        const questionBank = {
+            math: [
+                { question: "If 3x + 7 = 22, what is the value of x?", options: ["3", "5", "7", "9"], correct: 1, explanation: "3x + 7 = 22 → 3x = 15 → x = 5", subject: "math", topic: "Algebra" },
+                { question: "What is 15% of 200?", options: ["20", "25", "30", "35"], correct: 2, explanation: "15% of 200 = 0.15 × 200 = 30", subject: "math", topic: "Percentages" },
+                { question: "A circle has radius 7 cm. What is its area? (π = 22/7)", options: ["44 cm²", "154 cm²", "44 cm²", "308 cm²"], correct: 1, explanation: "Area = πr² = (22/7) × 7 × 7 = 154 cm²", subject: "math", topic: "Geometry" },
+                { question: "What is the slope of line passing through (2,3) and (4,7)?", options: ["1", "2", "3", "4"], correct: 1, explanation: "Slope = (7-3)/(4-2) = 4/2 = 2", subject: "math", topic: "Coordinate Geometry" },
+                { question: "If f(x) = 2x + 3, find f(5)", options: ["10", "13", "15", "8"], correct: 1, explanation: "f(5) = 2(5) + 3 = 10 + 3 = 13", subject: "math", topic: "Functions" },
+            ],
+            verbal: [
+                { question: "Choose the synonym of 'EPHEMERAL':", options: ["Permanent", "Transient", "Eternal", "Solid"], correct: 1, explanation: "Ephemeral means lasting for a very short time, synonymous with transient.", subject: "verbal", topic: "Vocabulary" },
+                { question: "Choose the antonym of 'CANDID':", options: ["Honest", "Deceptive", "Frank", "Open"], correct: 1, explanation: "Candid means truthful. The opposite is deceptive.", subject: "verbal", topic: "Vocabulary" },
+            ],
+            reading: [
+                { question: "Passage: The Industrial Revolution began in Britain in the 18th century. It transformed economies from agriculture to industry, leading to urbanization. What was a major effect?", options: ["Rural population increase", "Industrial decline", "Urbanization", "Agricultural growth"], correct: 2, explanation: "The passage states it led to urbanization as people moved to cities.", subject: "reading", topic: "Comprehension", passage: "The Industrial Revolution began in Britain in the 18th century. It transformed economies from agriculture to industry, leading to urbanization." },
+            ],
+            science: [
+                { question: "What is the chemical formula of water?", options: ["H2O", "CO2", "NaCl", "O2"], correct: 0, explanation: "Water consists of 2 hydrogen atoms and 1 oxygen atom: H2O", subject: "science", topic: "Chemistry" },
+                { question: "What force keeps planets in orbit around the sun?", options: ["Magnetic", "Gravitational", "Electric", "Nuclear"], correct: 1, explanation: "Gravitational force between the sun and planets keeps them in orbit.", subject: "science", topic: "Physics" },
+            ],
+            logic: [
+                { question: "In a queue, A is 5th from front and 5th from back. How many people?", options: ["8", "9", "10", "11"], correct: 1, explanation: "If A is 5th from both ends, total = 5 + 5 - 1 = 9 people", subject: "logic", topic: "Ordering" },
+            ],
+            data: [
+                { question: "If revenue increased 20% then decreased 10%, net change?", options: ["5% increase", "8% increase", "10% increase", "2% increase"], correct: 1, explanation: "100 → 120 → 108. Net change = 8% increase", subject: "data", topic: "Percentages" },
+            ],
+            grammar: [
+                { question: "Choose correct: 'Neither the manager nor the employees ___ present.'", options: ["was", "were", "is", "has been"], correct: 1, explanation: "With 'neither...nor', verb agrees with closer subject 'employees' (plural), so 'were'", subject: "grammar", topic: "Grammar" },
+            ],
+            writing: [
+                { question: "Identify error: 'Each of the students (A) / have submitted (B) / their assignment (C) / on time (D)'", options: ["A", "B", "C", "D"], correct: 1, explanation: "'Each' is singular, so verb should be 'has submitted' not 'have submitted'", subject: "writing", topic: "Grammar" },
+            ]
+        };
+
+        // ==================== STATE ====================
+        let state = {
+            selectedExam: null,
+            questions: [],
+            currentQuestion: 0,
+            answers: [],
+            flags: [],
+            timer: null,
+            timeRemaining: 0,
+            timeElapsed: 0,
+            testHistory: JSON.parse(localStorage.getItem('testHistory') || '[]')
+        };
+
+        // ==================== PAGE NAVIGATION ====================
+        function showPage(pageId) {
+            ['welcomePage', 'tcPage', 'examPage', 'testPage', 'resultsPage', 'dashboardPage'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            if (pageId === 'examPage') renderExamList();
+            if (pageId === 'dashboardPage') updateDashboard();
+        }
+
+        // ==================== T&C ====================
+        document.getElementById('tcAccept').addEventListener('change', function() {
+            document.getElementById('acceptBtn').disabled = !this.checked;
+        });
+
+        function acceptTC() {
+            if (document.getElementById('tcAccept').checked) {
+                localStorage.setItem('tcAccepted', 'true');
+                showPage('examPage');
+            }
+        }
+
+        // Check if T&C already accepted
+        if (localStorage.getItem('tcAccepted') === 'true') {
+            showPage('examPage');
+        }
+
+        // ==================== EXAM LIST ====================
+        function renderExamList(filter = 'all') {
+            const container = document.getElementById('examList');
+            let exams = examDatabase;
+            
+            if (filter !== 'all') {
+                exams = exams.filter(e => e.category === filter || e.subcategory === filter);
+            }
+            
+            container.innerHTML = exams.map((exam, index) => `
+                <div class="exam-item" style="border: 2px solid var(--light); border-radius: 8px; cursor: pointer; transition: all 0.3s; background: var(--white); padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: translateY(0);" onclick="openConfig('${exam.id}')" onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-5px)'" onmouseout="this.style.borderColor='var(--light)'; this.style.transform='translateY(0)'">
+                    <div class="exam-item-info">
+                        <h4>${exam.name}</h4>
+                        <p>${exam.description}</p>
+                    </div>
+                    <div class="exam-item-badges">
+                        <span class="${exam.difficulty}">${exam.difficulty}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterExams(category) {
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderExamList(category);
+        }
+
+        // ==================== SEARCH ====================
+        function searchExams(query) {
+            const container = document.getElementById('searchResults');
+            if (query.length < 2) { container.style.display = 'none'; return; }
+            
+            const filtered = examDatabase.filter(e => 
+                e.name.toLowerCase().includes(query.toLowerCase()) ||
+                e.description.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="padding:15px;text-align:center;color:var(--gray);">No exams found</div>';
+            } else {
+                container.innerHTML = filtered.map(exam => `
+                    <div class="exam-item" data-id="${exam.id}" style="border: 2px solid var(--light); border-radius: 8px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--light)'">
+                        <div class="exam-item-info">
+                            <h4>${exam.name}</h4>
+                            <p>${exam.description}</p>
+                        </div>
+                        <div class="exam-item-badges">
+                            <span class="${exam.difficulty}">${exam.difficulty}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Add event listeners
+                const searchItems = container.querySelectorAll('.exam-item');
+                searchItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        openConfig(item.dataset.id);
+                        container.style.display = 'none';
+                        document.getElementById('examSearch').value = '';
+                    });
+                });
+            }
+            container.style.display = 'block';
+        }
+
+        // ==================== CONFIG MODAL ====================
+        function openConfig(examId) {
+            const exam = examDatabase.find(e => e.id === examId);
+            if (!exam) return;
+            
+            state.selectedExam = exam;
+            document.getElementById('modalExamName').textContent = exam.name;
+            document.getElementById('selectedExamInfo').innerHTML = `
+                <p><strong>${exam.description}</strong></p>
+                <p style="font-size:13px;color:var(--gray);">Suggested subjects: ${exam.subjects.join(', ')}</p>
+            `;
+            
+            renderSubjectDistribution(exam.subjects);
+            document.getElementById('configModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('configModal').classList.remove('active');
+        }
+
+        function renderSubjectDistribution(subjects) {
+            const container = document.getElementById('subjectDist');
+            container.innerHTML = '<div class="subject-dist-grid">' + subjects.map(s => `
+                <div class="form-group">
+                    <label style="font-size:13px;" for="q_${s}">${s.charAt(0).toUpperCase() + s.slice(1)} Questions</label>
+                    <input type="number" id="q_${s}" min="0" max="50" value="10" onchange="updateTotal()">
+                </div>
+            `).join('') + '</div>';
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const exam = state.selectedExam;
+            if (!exam) return;
+            let total = exam.subjects.reduce((sum, s) => {
+                const input = document.getElementById(`q_${s}`);
+                return sum + (input ? parseInt(input.value) || 0 : 0);
+            }, 0);
+            document.getElementById('totalQDisplay').textContent = total;
+        }
+
+        // ==================== TEST GENERATION ====================
+        function startTest() {
+            const exam = state.selectedExam;
+            if (!exam) return;
+            
+            closeModal();
+            showPage('testPage');
+            
+            // Generate questions
+            let allQuestions = [];
+            exam.subjects.forEach(subject => {
+                const input = document.getElementById(`q_${subject}`);
+                const count = input ? parseInt(input.value) || 0 : 0;
+                const subjectQuestions = questionBank[subject] || [];
+                
+                for (let i = 0; i < count; i++) {
+                    const q = subjectQuestions[i % subjectQuestions.length];
+                    allQuestions.push({ ...q, id: allQuestions.length });
+                }
+            });
+            
+            // Shuffle
+            allQuestions = shuffleArray(allQuestions);
+            
+            state.questions = allQuestions;
+            state.currentQuestion = 0;
+            state.answers = new Array(allQuestions.length).fill(null);
+            state.flags = new Array(allQuestions.length).fill(false);
+            state.timeRemaining = parseInt(document.getElementById('timeLimit').value) * 60;
+            state.timeElapsed = 0;
+            
+            renderQuestion();
+            renderNavigator();
+            startTimer();
+            updateProgress();
+        }
+
+        function shuffleArray(arr) {
+            const shuffled = [...arr];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // ==================== TIMER ====================
+        function startTimer() {
+            if (state.timer) clearInterval(state.timer);
+            const timeLimit = parseInt(document.getElementById('timeLimit').value);
+            if (timeLimit === 0) { document.getElementById('timer').style.display = 'none'; return; }
+            document.getElementById('timer').style.display = 'flex';
+            
+            state.timer = setInterval(() => {
+                state.timeRemaining--;
+                state.timeElapsed++;
+                updateTimerDisplay();
+                if (state.timeRemaining <= 0) { clearInterval(state.timer); submitTest(); }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(state.timeRemaining / 60);
+            const s = state.timeRemaining % 60;
+            document.getElementById('timerDisplay').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            const timer = document.getElementById('timer');
+            timer.classList.remove('warning', 'danger');
+            if (state.timeRemaining <= 60) timer.classList.add('danger');
+            else if (state.timeRemaining <= 300) timer.classList.add('warning');
+        }
+
+        // ==================== QUESTION RENDERING ====================
+        function renderQuestion() {
+            const q = state.questions[state.currentQuestion];
+            if (!q) return;
+            
+            const container = document.getElementById('questionContainer');
+            let html = `<div class="question-card fade-in">
+                <div class="question-header">
+                    <span class="question-number">Question ${state.currentQuestion + 1}</span>
+                    <span style="font-size:12px;color:var(--gray);">${q.topic || q.subject}</span>
+                </div>`;
+            
+            if (q.passage) html += `<div class="passage">${q.passage}</div>`;
+            html += `<div class="question-text">${q.question}</div><div class="options">`;
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, i) => {
+                const isSelected = state.answers[state.currentQuestion] === i;
+                let cls = 'option';
+                if (isSelected) cls += ' selected';
+                html += `<div class="${cls}" onclick="selectOption(${i})">
+                    <span class="option-letter">${letters[i]}</span>
+                    <span>${opt}</span>
+                </div>`;
+            });
+            
+            html += '</div></div>';
+            container.innerHTML = html;
+            
+            // Update flag
+            const flagBtn = document.getElementById('flagBtn');
+            flagBtn.innerHTML = state.flags[state.currentQuestion] ? '<i class="fas fa-flag" style="color:var(--warning)"></i>' : '<i class="far fa-flag"></i>';
+            
+            // Update nav buttons
+            document.getElementById('prevBtn').style.visibility = state.currentQuestion === 0 ? 'hidden' : 'visible';
+            const isLast = state.currentQuestion === state.questions.length - 1;
+            document.getElementById('nextBtn').style.display = isLast ? 'none' : 'inline-flex';
+            document.getElementById('submitBtn').style.display = isLast ? 'inline-flex' : 'none';
+        }
+
+        function renderNavigator() {
+            const container = document.getElementById('navigator');
+            container.innerHTML = state.questions.map((_, i) => {
+                let cls = 'nav-btn';
+                if (i === state.currentQuestion) cls += ' current';
+                else if (state.flags[i]) cls += ' flagged';
+                else if (state.answers[i] !== null) cls += ' answered';
+                else cls += ' unanswered';
+                return `<div class="${cls}" onclick="goToQuestion(${i})">${i + 1}</div>`;
+            }).join('');
+        }
+
+        function updateProgress() {
+            const answered = state.answers.filter(a => a !== null).length;
+            const pct = (answered / state.questions.length) * 100;
+            document.getElementById('currentQ').textContent = state.currentQuestion + 1;
+            document.getElementById('totalQ').textContent = state.questions.length;
+            document.getElementById('progressBar').style.width = pct + '%';
+        }
+
+        // ==================== INTERACTIONS ====================
+        function selectOption(index) {
+            state.answers[state.currentQuestion] = index;
+            renderQuestion();
+            renderNavigator();
+            updateProgress();
+        }
+
+        function toggleFlag() {
+            state.flags[state.currentQuestion] = !state.flags[state.currentQuestion];
+            renderQuestion();
+            renderNavigator();
+        }
+
+        function previousQuestion() {
+            if (state.currentQuestion > 0) { state.currentQuestion--; renderQuestion(); renderNavigator(); }
+        }
+
+        function nextQuestion() {
+            if (state.currentQuestion < state.questions.length - 1) { state.currentQuestion++; renderQuestion(); renderNavigator(); }
+        }
+
+        function goToQuestion(index) {
+            state.currentQuestion = index;
+            renderQuestion();
+            renderNavigator();
+        }
+
+        // ==================== SUBMIT ====================
+        function submitTest() {
+            if (state.timer) clearInterval(state.timer);
+            
+            const unanswered = state.answers.filter(a => a === null).length;
+            if (unanswered > 0 && !confirm(`You have ${unanswered} unanswered questions. Submit anyway?`)) {
+                if (parseInt(document.getElementById('timeLimit').value) > 0) startTimer();
+                return;
+            }
+            
+            calculateResults();
+            saveResult();
+            showPage('resultsPage');
+            displayResults();
+        }
+
+        function calculateResults() {
+            let correct = 0, incorrect = 0, skipped = 0;
+            const subjectResults = {};
+            
+            state.questions.forEach((q, i) => {
+                const ans = state.answers[i];
+                const subj = q.subject || 'other';
+                if (!subjectResults[subj]) subjectResults[subj] = { correct: 0, total: 0 };
+                subjectResults[subj].total++;
+                
+                if (ans === null) skipped++;
+                else if (ans === q.correct) { correct++; subjectResults[subj].correct++; }
+                else incorrect++;
+            });
+            
+            state.results = {
+                correct, incorrect, skipped,
+                total: state.questions.length,
+                score: Math.round((correct / state.questions.length) * 100),
+                timeElapsed: state.timeElapsed,
+                subjectResults,
+                examName: state.selectedExam?.name || 'Custom Test',
+                date: new Date().toISOString()
+            };
+        }
+
+        function displayResults() {
+            const r = state.results;
+            
+            // Score circle
+            const circle = document.getElementById('scoreCircle');
+            const circumference = 2 * Math.PI * 90;
+            const offset = circumference - (r.score / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            
+            // Animate score
+            animateValue('scoreValue', 0, r.score, 1500, '%');
+            
+            document.getElementById('correctCount').textContent = r.correct;
+            document.getElementById('incorrectCount').textContent = r.incorrect;
+            document.getElementById('accuracy').textContent = r.score + '%';
+            const m = Math.floor(r.timeElapsed / 60), s = r.timeElapsed % 60;
+            document.getElementById('timeTaken').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+            
+            showReviewTab('summary', null);
+        }
+
+        function animateValue(id, start, end, duration, suffix = '') {
+            const el = document.getElementById(id);
+            const range = end - start;
+            const startTime = performance.now();
+            function update(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                el.textContent = Math.floor(start + range * progress) + suffix;
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        function showReviewTab(tab, event) {
+            if (event) {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+            
+            const r = state.results;
+            const container = document.getElementById('reviewContent');
+            
+            if (tab === 'summary') {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:20px;">
+                        <h3>Test Summary</h3>
+                        <p><strong>Exam:</strong> ${r.examName}</p>
+                        <p><strong>Total Questions:</strong> ${r.total}</p>
+                        <p><strong>Correct:</strong> <span style="color:var(--success)">${r.correct}</span></p>
+                        <p><strong>Incorrect:</strong> <span style="color:var(--danger)">${r.incorrect}</span></p>
+                        <p><strong>Skipped:</strong> <span style="color:var(--warning)">${r.skipped}</span></p>
+                        <p><strong>Score:</strong> <strong style="color:var(--primary);font-size:24px;">${r.score}%</strong></p>
+                    </div>`;
+            } else if (tab === 'review') {
+                container.innerHTML = '<h3 style="margin-bottom:20px;">Question Review</h3>' +
+                    state.questions.map((q, i) => {
+                        const ans = state.answers[i];
+                        const isCorrect = ans === q.correct;
+                        const isSkipped = ans === null;
+                        let statusClass = 'skipped', statusText = 'Skipped';
+                        if (!isSkipped) { statusClass = isCorrect ? 'correct-answer' : 'wrong-answer'; statusText = isCorrect ? 'Correct' : 'Incorrect'; }
+                        const color = isCorrect ? 'var(--success)' : isSkipped ? 'var(--warning)' : 'var(--danger)';
+                        return `<div style="padding:15px;background:var(--light);border-radius:8px;margin-bottom:10px;border-left:4px solid ${color}">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                                <strong>Q${i+1}: ${q.topic || q.subject}</strong>
+                                <span style="padding:4px 12px;border-radius:12px;background:${color};color:white;font-size:12px;">${statusText}</span>
+                            </div>
+                            <p>${q.question}</p>
+                            ${ans !== null ? `<p><strong>Your answer:</strong> ${q.options[ans]}</p>` : ''}
+                            ${!isCorrect && !isSkipped ? `<p><strong>Correct answer:</strong> ${q.options[q.correct]}</p>` : ''}
+                        </div>`;
+                    }).join('');
+            } else if (tab === 'explanations') {
+                container.innerHTML = '<h3 style="margin-bottom:20px;">Explanations</h3>' +
+                    state.questions.map((q, i) => q.explanation ?
+                        `<div style="padding:15px;background:var(--light);border-radius:8px;margin-bottom:10px;">
+                            <strong>Q${i+1}:</strong> ${q.question}
+                            <div class="explanation"><h4><i class="fas fa-lightbulb"></i> Explanation</h4><p>${q.explanation}</p></div>
+                        </div>` : ''
+                    ).join('');
+            }
+        }
+
+        // ==================== LOCAL STORAGE ====================
+        function saveResult() {
+            state.testHistory.push({ ...state.results, id: Date.now() });
+            if (state.testHistory.length > 50) state.testHistory = state.testHistory.slice(-50);
+            localStorage.setItem('testHistory', JSON.stringify(state.testHistory));
+        }
+
+        function updateDashboard() {
+            const h = state.testHistory;
+            document.getElementById('dashTotalTests').textContent = h.length;
+            
+            if (h.length > 0) {
+                const avg = Math.round(h.reduce((s, t) => s + t.score, 0) / h.length);
+                const best = Math.max(...h.map(t => t.score));
+                document.getElementById('dashAvgScore').textContent = avg + '%';
+                document.getElementById('dashBestScore').textContent = best + '%';
+                
+                // Streak
+                const dates = [...new Set(h.map(t => new Date(t.date).toDateString()))].map(d => new Date(d)).sort((a, b) => b - a);
+                let streak = 0;
+                if (dates.length > 0) {
+                    streak = 1;
+                    for (let i = 0; i < dates.length - 1; i++) {
+                        if ((dates[i] - dates[i + 1]) / (1000 * 60 * 60 * 24) === 1) streak++;
+                        else break;
+                    }
+                }
+                document.getElementById('dashStreak').textContent = streak;
+                
+                // History
+                document.getElementById('historyList').innerHTML = h.slice(-10).reverse().map(t => {
+                    const d = new Date(t.date);
+                    const cls = t.score >= 80 ? 'good' : t.score >= 60 ? 'average' : 'poor';
+                    return `<div class="history-item">
+                        <div><h4 style="font-size:14px;">${t.examName}</h4><div style="font-size:12px;color:var(--gray);">${d.toLocaleDateString()} • ${t.total} Qs</div></div>
+                        <div class="history-score ${cls}" style="font-size:20px;font-weight:700;">${t.score}%</div>
+                    </div>`;
+                }).join('') || '<p style="color:var(--gray);padding:20px;text-align:center;">No tests yet</p>';
+            }
+        }
+
+        function quitExam() {
+            if (state.timer) clearInterval(state.timer);
+            const answered = state.answers.filter(a => a !== null).length;
+            if (answered > 0 && confirm('Quit and save progress?')) {
+                calculateResults();
+                saveResult();
+                showPage('resultsPage');
+                displayResults();
+            } else if (answered === 0) {
+                showPage('examPage');
+            }
+        }
+
+        function retakeTest() { showPage('examPage'); }
+        function goToDashboard() { showPage('dashboardPage'); }
+
+        // Close search on outside click
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#examSearch') && !e.target.closest('#searchResults')) {
+                document.getElementById('searchResults').style.display = 'none';
+            }
+        });
+        document.getElementById('configModal').addEventListener('click', e => {
+            if (e.target === e.currentTarget) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('testPage').classList.contains('hidden')) return;
+            if (e.key === 'ArrowLeft') previousQuestion();
+            if (e.key === 'ArrowRight') nextQuestion();
+            if (['1','2','3','4'].includes(e.key)) selectOption(parseInt(e.key) - 1);
+            if (e.key === 'f' || e.key === 'F') toggleFlag();
+        });
+
+        // Initialize
+        if (localStorage.getItem('tcAccepted') !== 'true') {
+            showPage('welcomePage');
+        }
+
+        // Add event listeners
+        document.getElementById('startTestBtn').addEventListener('click', startTest);
+    </script>
+</body>
+</html>
