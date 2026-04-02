@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI MockTest Pro - Intelligent Test Preparation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCao5MpHcc4oLY9LvGsXYMBygTmcWrJZXQ",
+            authDomain: "project-d7ff55e2-4af9-42e2-ac9.firebaseapp.com",
+            projectId: "project-d7ff55e2-4af9-42e2-ac9",
+            storageBucket: "project-d7ff55e2-4af9-42e2-ac9.firebasestorage.app",
+            messagingSenderId: "387534516662",
+            appId: "1:387534516662:web:802311ef4a3a237ede1117"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        console.log('Firebase initialized successfully');
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
