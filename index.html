@@ -568,8 +568,8 @@
 
         // ==================== GEMINI API CONFIGURATION ====================
         // Replace with your actual Gemini API key
-        const GEMINI_API_KEY = 'AIzaSyAtyw0TzSzlhuveS4ABTWiUpDmATQdFHSw';
-        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
+        const GEMINI_API_KEY = 'AIzaSyCao5MpHcc4oLY9LvGsXYMBygTmcWrJZXQ';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent';
         
         // ==================== AI QUESTION GENERATION ====================
         async function generateAIQuestions(exam, subjects, difficulty, totalQuestions) {
@@ -907,16 +907,24 @@ IMPORTANT: Generate ALL ${totalQuestions} questions. Do not generate fewer quest
                 const totalQ = parseInt(document.getElementById('totalQDisplay').textContent);
                 const difficulty = document.getElementById('difficulty').value;
                 
-                // Generate questions using AI
-                const aiQuestions = await generateAIQuestions(exam, exam.subjects, difficulty, totalQ);
+                let questions;
+                try {
+                    // Try to generate questions using AI
+                    questions = await generateAIQuestions(exam, exam.subjects, difficulty, totalQ);
+                } catch (aiError) {
+                    console.warn('AI generation failed:', aiError.message);
+                    // Fallback to static questions
+                    questions = generateFallbackQuestions(exam, exam.subjects, difficulty, totalQ);
+                    alert('AI generation unavailable. Using practice questions instead.');
+                }
                 
                 closeModal();
                 showPage('testPage');
                 
-                state.questions = aiQuestions;
+                state.questions = questions;
                 state.currentQuestion = 0;
-                state.answers = new Array(aiQuestions.length).fill(null);
-                state.flags = new Array(aiQuestions.length).fill(false);
+                state.answers = new Array(questions.length).fill(null);
+                state.flags = new Array(questions.length).fill(false);
                 state.timeRemaining = parseInt(document.getElementById('timeLimit').value) * 60;
                 state.timeElapsed = 0;
                 
@@ -926,8 +934,8 @@ IMPORTANT: Generate ALL ${totalQuestions} questions. Do not generate fewer quest
                 updateProgress();
                 
             } catch (error) {
-                console.error('Failed to generate questions:', error);
-                alert('Failed to generate AI questions. Please check your API key and try again. Error: ' + error.message);
+                console.error('Failed to start test:', error);
+                alert('Failed to start test. Please try again.');
                 startBtn.innerHTML = originalText;
                 startBtn.disabled = false;
             }
