@@ -15,7 +15,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          workload_identity_provider: 'projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-actions-pool-ai-mocktest/providers/github-actions-provider'
+          workload_identity_provider: 'projects/387534516662/locations/global/workloadIdentityPools/github-actions-pool-ai-mocktest/providers/github-actions-provider'
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
